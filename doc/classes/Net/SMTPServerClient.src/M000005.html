@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>process (Net::SMTPServerClient)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/smtpserverclient.rb, line 71</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">process</span>
+        
+        <span class="ruby-comment cmt"># Get line from the socket</span>
+        <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">input</span> = <span class="ruby-ivar">@socket</span>.<span class="ruby-identifier">gets</span>
+                
+                <span class="ruby-comment cmt"># Remove stupid whitespace in front or at the end</span>
+                <span class="ruby-identifier">input</span>.<span class="ruby-identifier">gsub!</span>(<span class="ruby-regexp re">/^\s+/</span>,<span class="ruby-value str">''</span>)
+                <span class="ruby-identifier">input</span>.<span class="ruby-identifier">gsub!</span>(<span class="ruby-regexp re">/\s+$/</span>,<span class="ruby-value str">''</span>)
+
+                <span class="ruby-comment cmt"># Check if we can actually do something with the input</span>
+                <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">input</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-keyword kw">then</span>
+                        <span class="ruby-identifier">bad_input</span>
+                        <span class="ruby-keyword kw">next</span>
+                <span class="ruby-keyword kw">end</span>
+
+                <span class="ruby-comment cmt"># Get command and arguments from input</span>
+                <span class="ruby-identifier">a</span> = <span class="ruby-identifier">input</span>.<span class="ruby-identifier">split</span>(<span class="ruby-regexp re">/\s+/</span>,<span class="ruby-value">2</span>)
+                <span class="ruby-identifier">cmd</span> = <span class="ruby-identifier">a</span>[<span class="ruby-value">0</span>]
+                <span class="ruby-identifier">args</span> = <span class="ruby-identifier">a</span>[<span class="ruby-value">1</span>]
+                <span class="ruby-identifier">cmd</span>.<span class="ruby-identifier">downcase!</span> 
+
+                <span class="ruby-comment cmt"># Barf when we don't know the command</span>
+                <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-ivar">@cmds</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">cmd</span>) <span class="ruby-keyword kw">then</span>
+                        <span class="ruby-identifier">bad_input</span>
+                        <span class="ruby-keyword kw">next</span>
+                <span class="ruby-keyword kw">end</span>
+
+                <span class="ruby-comment cmt"># Call method based on command</span>
+                <span class="ruby-identifier">method</span>(<span class="ruby-identifier">cmd</span>).<span class="ruby-identifier">call</span>(<span class="ruby-identifier">args</span>)
+                
+                <span class="ruby-comment cmt"># Return if the message is not empty (means we received an email)</span>
+                <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@message</span>.<span class="ruby-identifier">empty?</span> 
+
+                <span class="ruby-comment cmt"># Return if the socket is closed with QUIT</span>
+                <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@closed</span>
+        <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

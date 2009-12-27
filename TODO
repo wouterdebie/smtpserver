@@ -1,0 +1,6 @@
+Thing to do:
+
+* Add more checks
+* add ESMTP functionality
+* Stuff is really done the Perl way, clean up and do it more in a Ruby fashion
+
